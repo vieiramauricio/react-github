@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { shade } from "polished";
+import { shade, lighten } from "polished";
 
 const Title = styled.h1`
   font-weight: bold;
@@ -46,11 +46,11 @@ const Form = styled.form`
   }
 `;
 
-const Users = styled.div`
+const Repositories = styled.div`
   margin-top: 80px;
 `;
 
-const User = styled.a`
+const Repository = styled.a`
   max-width: 700px;
   display: flex;
   align-items: center;
@@ -83,6 +83,12 @@ const User = styled.a`
     span {
       display: block;
       color: #a8a8b3;
+      margin: 10px 0;
+    }
+
+    p {
+      font-weight: bold;
+      color: ${lighten(0.2, "#3d3d4d")};
     }
   }
 
@@ -92,4 +98,4 @@ const User = styled.a`
   }
 `;
 
-export { Title, Container, Form, User, Users };
+export { Title, Container, Form, Repository, Repositories };

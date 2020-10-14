@@ -1,95 +1,75 @@
-import React, { useState, useEffect } from "react";
-import { Container, Title, Form, Users, User } from "./styles";
+import React, { useState, FormEvent } from "react";
+import { Container, Title, Form, Repositories, Repository } from "./styles";
 import Logo from "../../assets/Logo.svg";
 import { FiChevronRight } from "react-icons/fi";
 import api from "../../services/api";
 
+interface Owner {
+  avatar_url: string;
+}
+interface Repository {
+  id: number;
+  name: string;
+  html_url: string;
+  description: string;
+  language: string;
+  owner: Owner;
+}
+
 const Dashboard: React.FC = () => {
-  const [repositories, setRepositories] = useState([]);
+  const [login, setLogin] = useState("");
+  const [repositories, setRepositories] = useState<Repository[]>([]);
+
+  const handleForm = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (login) {
+      getRepositories(login);
+    }
+  };
+
+  const getRepositories = async (login: string) => {
+    try {
+      const response = await api.get<Repository[]>(`/${login}/repos`);
+      setRepositories(response.data);
+      setLogin("");
+      // console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Container>
       <img src={Logo} alt="Logo Github Explorer" />
       <Title>Explore repositórios no Github.</Title>
 
-      <Form>
-        <input type="text" placeholder="Digite aqui" />
+      <Form onSubmit={handleForm}>
+        <input
+          type="text"
+          placeholder="Digite o usuário aqui"
+          onChange={(e) => setLogin(e.target.value)}
+          value={login}
+        />
         <button type="submit">Pesquisar</button>
       </Form>
 
-      <Users>
-        <User href="#">
-          <img
-            src="https://avatars1.githubusercontent.com/u/37835413?s=460&u=3bf7f84ccac1d1f878fa6bab8e93963ea42bddf0&v=4"
-            alt="Github avatar"
-          />
-          <div>
-            <strong>vieiramauricio</strong>
-            <span>I turn coffee into code</span>
-          </div>
-          <FiChevronRight size={20} />
-        </User>
-
-        <User href="#">
-          <img
-            src="https://avatars1.githubusercontent.com/u/37835413?s=460&u=3bf7f84ccac1d1f878fa6bab8e93963ea42bddf0&v=4"
-            alt="Github avatar"
-          />
-          <div>
-            <strong>vieiramauricio</strong>
-            <span>I turn coffee into code</span>
-          </div>
-          <FiChevronRight size={20} />
-        </User>
-
-        <User href="#">
-          <img
-            src="https://avatars1.githubusercontent.com/u/37835413?s=460&u=3bf7f84ccac1d1f878fa6bab8e93963ea42bddf0&v=4"
-            alt="Github avatar"
-          />
-          <div>
-            <strong>vieiramauricio</strong>
-            <span>I turn coffee into code</span>
-          </div>
-          <FiChevronRight size={20} />
-        </User>
-
-        <User href="#">
-          <img
-            src="https://avatars1.githubusercontent.com/u/37835413?s=460&u=3bf7f84ccac1d1f878fa6bab8e93963ea42bddf0&v=4"
-            alt="Github avatar"
-          />
-          <div>
-            <strong>vieiramauricio</strong>
-            <span>I turn coffee into code</span>
-          </div>
-          <FiChevronRight size={20} />
-        </User>
-
-        <User href="#">
-          <img
-            src="https://avatars1.githubusercontent.com/u/37835413?s=460&u=3bf7f84ccac1d1f878fa6bab8e93963ea42bddf0&v=4"
-            alt="Github avatar"
-          />
-          <div>
-            <strong>vieiramauricio</strong>
-            <span>I turn coffee into code</span>
-          </div>
-          <FiChevronRight size={20} />
-        </User>
-
-        <User href="#">
-          <img
-            src="https://avatars1.githubusercontent.com/u/37835413?s=460&u=3bf7f84ccac1d1f878fa6bab8e93963ea42bddf0&v=4"
-            alt="Github avatar"
-          />
-          <div>
-            <strong>vieiramauricio</strong>
-            <span>I turn coffee into code</span>
-          </div>
-          <FiChevronRight size={20} />
-        </User>
-      </Users>
+      <Repositories>
+        {repositories.map((repository) => (
+          <Repository
+            key={repository.id}
+            href={repository.html_url}
+            target="_blank"
+          >
+            <img src={repository.owner.avatar_url} alt="Github avatar" />
+            <div>
+              <strong>{repository.name}</strong>
+              <span>{repository.description}</span>
+              <p>{repository.language}</p>
+            </div>
+            <FiChevronRight size={20} />
+          </Repository>
+        ))}
+      </Repositories>
     </Container>
   );
 };
