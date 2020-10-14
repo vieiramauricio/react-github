@@ -18,23 +18,44 @@ interface Repository {
 
 const Dashboard: React.FC = () => {
   const [login, setLogin] = useState("");
-  const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [repositories, setRepositories] = useState<Repository[]>(() => {
+    const repositoriesJSON = localStorage.getItem(
+      "@GithubExplorer:repositories"
+    );
+    if (repositoriesJSON) {
+      return JSON.parse(repositoriesJSON);
+    }
+
+    return [];
+  });
+  const [inputError, setInputError] = useState("");
 
   const handleForm = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (login) {
       getRepositories(login);
+    } else {
+      setInputError("Insira um usuário!");
     }
   };
 
   const getRepositories = async (login: string) => {
     try {
       const response = await api.get<Repository[]>(`/${login}/repos`);
-      setRepositories(response.data);
+      if (response.data) {
+        setRepositories(response.data);
+        localStorage.setItem(
+          "@GithubExplorer:repositories",
+          JSON.stringify(response.data)
+        );
+        setInputError("");
+      } else {
+        setInputError("Nenhum repositório encontrado");
+      }
       setLogin("");
-      // console.log(response.data);
     } catch (e) {
       console.log(e);
+      setInputError(e.message);
     }
   };
 
@@ -53,23 +74,27 @@ const Dashboard: React.FC = () => {
         <button type="submit">Pesquisar</button>
       </Form>
 
-      <Repositories>
-        {repositories.map((repository) => (
-          <Repository
-            key={repository.id}
-            href={repository.html_url}
-            target="_blank"
-          >
-            <img src={repository.owner.avatar_url} alt="Github avatar" />
-            <div>
-              <strong>{repository.name}</strong>
-              <span>{repository.description}</span>
-              <p>{repository.language}</p>
-            </div>
-            <FiChevronRight size={20} />
-          </Repository>
-        ))}
-      </Repositories>
+      {inputError ? (
+        <div>{inputError}</div>
+      ) : (
+        <Repositories>
+          {repositories.map((repository) => (
+            <Repository
+              key={repository.id}
+              href={repository.html_url}
+              target="_blank"
+            >
+              <img src={repository.owner.avatar_url} alt="Github avatar" />
+              <div>
+                <strong>{repository.name}</strong>
+                <span>{repository.description}</span>
+                <p>{repository.language}</p>
+              </div>
+              <FiChevronRight size={20} />
+            </Repository>
+          ))}
+        </Repositories>
+      )}
     </Container>
   );
 };
