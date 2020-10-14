@@ -46,4 +46,50 @@ const Form = styled.form`
   }
 `;
 
-export { Title, Container, Form };
+const Users = styled.div`
+  margin-top: 80px;
+`;
+
+const User = styled.a`
+  max-width: 700px;
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  background: #ffffff;
+  border-radius: 5px;
+  transition: all 0.3s ease-in;
+
+  &:hover {
+    transform: translateX(20px);
+  }
+
+  & + a {
+    margin-top: 16px;
+  }
+
+  img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+  }
+
+  div {
+    margin-left: 16px;
+
+    strong {
+      color: #3d3d4d;
+    }
+
+    span {
+      display: block;
+      color: #a8a8b3;
+    }
+  }
+
+  svg {
+    margin-left: auto;
+    color: #c9c9d4;
+  }
+`;
+
+export { Title, Container, Form, User, Users };
