@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Container } from "./styles";
+import { Container, Navbar, Hero, Numbers, Issue } from "./styles";
 import { useRouteMatch, Link } from "react-router-dom";
 import Logo from "../../assets/Logo.svg";
-import { FiChevronRight } from "react-icons/fi";
+import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import api from "../../services/api";
 import axios from "axios";
 
@@ -26,6 +26,7 @@ interface User {
   login: string;
 }
 interface Issue {
+  id: number;
   title: string;
   user: User;
   html_url: string;
@@ -52,36 +53,48 @@ const Repository: React.FC = () => {
 
   return (
     <Container>
-      <div>
+      <Navbar>
         <img src={Logo} alt="Logo Github Explorer" />
-        <Link to="/">Voltar</Link>
-      </div>
+        <Link to="/">
+          <FiChevronLeft size={20} />
+          Voltar
+        </Link>
+      </Navbar>
 
       {repository && (
         <>
           <div>
-            <div>
+            <Hero>
               <img src={repository.owner.avatar_url} alt="Github avatar" />
               <div>
-                <strong>{params.repository}</strong>
-                <span>Pretty website for a garden school</span>
+                <strong>{repository.full_name}</strong>
+                <span>{repository.description}</span>
               </div>
-            </div>
-            {/* Informações do owner */}
-            <div></div>
-            {/* Detalhes  */}
+            </Hero>
+            <Numbers>
+              <div>
+                <h4>{repository.stargazers_count}</h4>
+                <span>Stars</span>
+              </div>
+              <div>
+                <h4>{repository.forks}</h4>
+                <span>Forks</span>
+              </div>
+              <div>
+                <h4>{issues.length}</h4>
+                <span>Issues</span>
+              </div>
+            </Numbers>
           </div>
 
           {issues.map((issue) => (
-            <div>
+            <Issue key={issue.id} href={issue.html_url} target="_blank">
               <div>
-                <div>
-                  <strong>{issue.title}</strong>
-                  <span>{issue.user.login}</span>
-                </div>
-                <FiChevronRight size={20} />
+                <strong>{issue.title}</strong>
+                <span>{issue.user.login}</span>
               </div>
-            </div>
+              <FiChevronRight size={20} />
+            </Issue>
           ))}
         </>
       )}
