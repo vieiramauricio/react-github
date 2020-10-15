@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { shade, lighten } from "polished";
+import { Link } from "react-router-dom";
 
 const Title = styled.h1`
   font-weight: bold;
@@ -14,6 +15,11 @@ const Container = styled.section`
   margin: 0 auto;
   width: 95%;
   padding: 40px 0;
+`;
+
+const RepositoryLink = styled(Link)`
+  display: block;
+  margin-top: 16px;
 `;
 
 const Form = styled.form`
@@ -62,9 +68,9 @@ const Repository = styled.a`
   &:hover {
     transform: translateX(20px);
   }
-
-  & + a {
-    margin-top: 16px;
+  a {
+    display: block;
+    background: blue;
   }
 
   img {
@@ -98,4 +104,4 @@ const Repository = styled.a`
   }
 `;
 
-export { Title, Container, Form, Repository, Repositories };
+export { Title, Container, Form, Repository, Repositories, RepositoryLink };

@@ -1,11 +1,19 @@
 import React, { useState, FormEvent } from "react";
-import { Container, Title, Form, Repositories, Repository } from "./styles";
+import {
+  Container,
+  Title,
+  Form,
+  Repositories,
+  Repository,
+  RepositoryLink,
+} from "./styles";
 import Logo from "../../assets/Logo.svg";
 import { FiChevronRight } from "react-icons/fi";
 import api from "../../services/api";
 
 interface Owner {
   avatar_url: string;
+  login: string;
 }
 interface Repository {
   id: number;
@@ -41,7 +49,7 @@ const Dashboard: React.FC = () => {
 
   const getRepositories = async (login: string) => {
     try {
-      const response = await api.get<Repository[]>(`/${login}/repos`);
+      const response = await api.get<Repository[]>(`/users/${login}/repos`);
       if (response.data) {
         setRepositories(response.data);
         localStorage.setItem(
@@ -79,19 +87,25 @@ const Dashboard: React.FC = () => {
       ) : (
         <Repositories>
           {repositories.map((repository) => (
-            <Repository
-              key={repository.id}
-              href={repository.html_url}
-              target="_blank"
+            <RepositoryLink
+              to={{
+                pathname: `/repository/${repository.owner.login}/${repository.name}`,
+              }}
             >
-              <img src={repository.owner.avatar_url} alt="Github avatar" />
-              <div>
-                <strong>{repository.name}</strong>
-                <span>{repository.description}</span>
-                <p>{repository.language}</p>
-              </div>
-              <FiChevronRight size={20} />
-            </Repository>
+              <Repository
+                key={repository.id}
+                href={repository.html_url}
+                target="_blank"
+              >
+                <img src={repository.owner.avatar_url} alt="Github avatar" />
+                <div>
+                  <strong>{repository.name}</strong>
+                  <span>{repository.description}</span>
+                  <p>{repository.language}</p>
+                </div>
+                <FiChevronRight size={20} />
+              </Repository>
+            </RepositoryLink>
           ))}
         </Repositories>
       )}
